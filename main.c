@@ -1,5 +1,12 @@
 #include <gtk/gtk.h>
 
+extern void suma(GtkWidget *widget, gpointer data);
+extern void resta(GtkWidget *widget, gpointer data);
+extern void multiplicacion(GtkWidget *widget, gpointer data);
+extern void division(GtkWidget *widget, gpointer data);
+extern void porcentaje(GtkWidget *widget, gpointer data);
+
+
 static void say_hello(GtkWidget *widget, gpointer data) {
     g_print("Hello, World!\n");
 }
