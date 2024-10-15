@@ -27,16 +27,19 @@ static void activate(GtkApplication *application, gpointer user_data) {
     grid = gtk_grid_new();
     gtk_window_set_child(GTK_WINDOW(window), grid);
 
-    label = gtk_label_new("Calculadora");
+    label = gtk_label_new("Resultado");
     gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
 
     button = gtk_button_new_with_label("AC");
     g_signal_connect(button, "clicked", G_CALLBACK(say_hello), NULL);
     gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 1, 1);
 
-    button = gtk_button_new_with_label("7");
-    g_signal_connect(button, "clicked", G_CALLBACK(say_hello), NULL);
-    gtk_grid_attach(GTK_GRID(grid), button, 0, 2, 1, 1);
+    //for para crear todos los botones numericos
+    for (int i = 0; i < 10; i++) {
+        button = gtk_button_new_with_label(g_strdup_printf("%d", i));
+        g_signal_connect(button, "clicked", G_CALLBACK(say_hello), NULL);
+        gtk_grid_attach(GTK_GRID(grid), button, i % 3, i / 3 + 2, 1, 1);
+    }
 
 
     gtk_window_present(GTK_WINDOW(window));
