@@ -6,9 +6,52 @@ extern void multiplicacion(GtkWidget *widget, gpointer data);
 extern void division(GtkWidget *widget, gpointer data);
 extern void porcentaje(GtkWidget *widget, gpointer data);
 
+static void say_hello (GtkWidget *widget, gpointer data) {
+    g_print("Hello World\n");
+}
 
-static void say_hello(GtkWidget *widget, gpointer data) {
-    g_print("Hello, World!\n");
+static void cero (GtkWidget *widget, gpointer data) {
+    g_print("0\n");
+}
+
+static void uno (GtkWidget *widget, gpointer data) {
+    g_print("1\n");
+}
+
+static void dos (GtkWidget *widget, gpointer data) {
+    g_print("2\n");
+}
+
+static void tres (GtkWidget *widget, gpointer data) {
+    g_print("3\n");
+}
+
+static void cuatro (GtkWidget *widget, gpointer data) {
+    g_print("4\n");
+}
+
+static void cinco (GtkWidget *widget, gpointer data) {
+    g_print("5\n");
+}
+
+static void seis (GtkWidget *widget, gpointer data) {
+    g_print("6\n");
+}
+
+static void siete (GtkWidget *widget, gpointer data) {
+    g_print("7\n");
+}
+
+static void ocho (GtkWidget *widget, gpointer data) {
+    g_print("8\n");
+}
+
+static void nueve (GtkWidget *widget, gpointer data) {
+    g_print("9\n");
+}
+
+static void punto (GtkWidget *widget, gpointer data) {
+    g_print(".\n");
 }
 
 static void activate(GtkApplication *application, gpointer user_data) {
@@ -71,7 +114,7 @@ static void activate(GtkApplication *application, gpointer user_data) {
     }
 
     button = gtk_button_new_with_label("0");
-    g_signal_connect(button, "clicked", G_CALLBACK(say_hello), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(cero), NULL);
     gtk_grid_attach(GTK_GRID(grid), button, 0, 5, 2, 1);
 
     gtk_window_present(GTK_WINDOW(window));
