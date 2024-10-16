@@ -1,43 +1,35 @@
 ;archivo con las operaciones a usar en la calculadora
 
-section .data
-    num1 dd 0
-    num2 dd 0
-    resultado dd 0
-
 section .text
-    global suma
-    global resta
-    global multiplicacion
-    global division
+    global calcularSuma
+    global calcularResta
+    global calcularMultiplicacion
+    global calcularDivision
 
-suma:
+calcularSuma:
     ;Sumar números
-    mov eax, [num1]
-    mov ebx, [num2]
+    mov eax, edi
+    mov ebx, esi
     ADD eax, ebx
-    mov [resultado], eax
     ret
 
-resta:
+calcularResta:
     ;Restar números
-    mov eax, [num1]
-    mov ebx, [num2]
+    mov eax, edi
+    mov ebx, esi
     SUB eax, ebx
-    mov [resultado], eax
     ret
 
-multiplicacion:
+calcularMultiplicacion:
     ;Multiplicar números
-    mov eax, [num1]
-    mov ebx, [num2]
+    mov eax, edi
+    mov ebx, esi
     IMUL eax, ebx
-    mov [resultado], eax
     ret
 
-division:
-    MOV eax, [num1] ; Dividendo
-    MOV ebx, [num2] ; Divisor
+calcularDivision:
+    MOV eax, edi ; Dividendo
+    MOV ebx, esi ; Divisor
 
     ; Verificar si el divisor es 0
     CMP ebx, 0
@@ -52,8 +44,6 @@ division:
     ; División
     CWD ; Extender el signo de rax a dx:rax
     DIV ebx
-    MOV [resultado], eax
-
     ret 
 
 divisionPorCero:
@@ -73,6 +63,5 @@ continuarDivision:
     CWD
     DIV ebx
     NEG eax ; Negar el resultado si el divisor era negativo
-    MOV [resultado], eax
     ret
 
