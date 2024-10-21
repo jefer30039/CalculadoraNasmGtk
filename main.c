@@ -1,19 +1,21 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
-extern int calcularSuma(int operando1, int operando2);
-extern int calcularResta(int operando1, int operando2);
-extern int calcularMultiplicacion(int operando1, int operando2);
-extern int calcularDivision(int operando1, int operando2);
-//extern void calcularPorcentaje(int operando1, int operando2);
+extern long calcularSuma(long operando1, long operando2);
+extern long calcularResta(long operando1, long operando2);
+extern long calcularMultiplicacion(long operando1, long operando2);
+extern long calcularDivision(long operando1, long operando2);
+//extern void calcularPorcentaje(long operando1, long operando2);
 
 char input[100];
-int numero = 0;
+long numero = 0;
+char *numeroStr;
 int posicion_input = 0;
-int operando1 = 0;
-int operando2 = 0;
+long operando1 = 0;
+long operando2 = 0;
 int operacion = 0;
-int resultado = 0;
+long resultado = 0;
+GtkWidget *label;
 
 //funcion para limpiar la entrada
 static void limpiarEntrada (GtkWidget *widget, gpointer data) {
@@ -23,32 +25,55 @@ static void limpiarEntrada (GtkWidget *widget, gpointer data) {
     posicion_input = 0;
 }
 
+//funcion para actualizar el label
+void updateDisplay(GtkWidget *label, char *texto) {
+    gtk_label_set_text(GTK_LABEL(label), texto);
+}
+
+//funcion para guardar y mostrar los numeros
+static void mostrarNum (GtkWidget *widget, gpointer data) {
+    numero = atol (input);
+    char numeroStr[20];
+    snprintf(numeroStr, sizeof(numeroStr), "%ld", numero);
+    //llama a updateDisplay
+    updateDisplay (label, numeroStr);
+
+}
+
+//funcion para mostrar los resultados
+static void mostrarResult (GtkWidget *widget, gpointer data) {
+    char resultadoStr[20];
+    snprintf(resultadoStr, sizeof(resultadoStr), "%ld", resultado);
+    updateDisplay (label, resultadoStr);
+
+}
+
 static void say_hello (GtkWidget *widget, gpointer data) {
     g_print("Hello World\n");
 }
 static void suma (GtkWidget *widget, gpointer data) {
-    g_print("+\n");
-    numero = atoi(input);
+    updateDisplay (label, "+");
+    numero = atol(input);
     operando1 = numero;
     limpiarEntrada(widget, data);
     operacion = 1;
 }
 static void resta (GtkWidget *widget, gpointer data) {
-    g_print("-\n");
-    numero = atoi(input);
+    updateDisplay (label, "-");
+    numero = atol(input);
     operando1 = numero;
     limpiarEntrada(widget, data);
     operacion = 2;
 }static void multiplicacion (GtkWidget *widget, gpointer data) {
-    g_print("x\n");
-    numero = atoi(input);
+    updateDisplay (label, "x");
+    numero = atol(input);
     operando1 = numero;
     limpiarEntrada(widget, data);
     operacion = 3;
 
 }static void division (GtkWidget *widget, gpointer data) {
-    g_print("÷\n");
-    numero = atoi(input);
+    updateDisplay (label, "÷");
+    numero = atol(input);
     operando1 = numero;
     limpiarEntrada(widget, data);
     operacion = 4;
@@ -57,29 +82,43 @@ static void resta (GtkWidget *widget, gpointer data) {
     operando1 = numero;
     numero = 0;
     operacion = 5;
-}static void ac (GtkWidget *widget, gpointer data) {
+}static void clear (GtkWidget *widget, gpointer data) {
     limpiarEntrada(widget, data);
-    g_print("\n");
+    updateDisplay (label, " ");
 }
 static void igual(GtkWidget *widget, gpointer data) {
-    g_print("=\n");
     operando2 = numero;
     switch (operacion){
         case 1:
             resultado = calcularSuma(operando1, operando2);
-            g_print("Resultado: %d\n", resultado);
+            //guardar el resultado en la entrada
+            snprintf(input, sizeof(input), "%ld", resultado);
+            posicion_input = strlen(input);
+            mostrarResult (widget, data);
             break;
         case 2:
             resultado = calcularResta(operando1, operando2);
-            g_print("Resultado: %d\n", resultado);
+            g_print("Resultado: %ld\n", resultado);
+            //guardar el resultado en la entrada
+            snprintf(input, sizeof(input), "%ld", resultado);
+            posicion_input = strlen(input);
+            mostrarResult (widget, data);
             break;
         case 3:
             resultado = calcularMultiplicacion(operando1, operando2);
-            g_print("Resultado: %d\n", resultado);
+            g_print("Resultado: %ld\n", resultado);
+            //guardar el resultado en la entrada
+            snprintf(input, sizeof(input), "%ld", resultado);
+            posicion_input = strlen(input);
+            mostrarResult (widget, data);            
             break;
         case 4:
             resultado = calcularDivision(operando1, operando2);
-            g_print("Resultado: %d\n", resultado);
+            g_print("Resultado: %ld\n", resultado);
+            //guardar el resultado en la entrada
+            snprintf(input, sizeof(input), "%ld", resultado);
+            posicion_input = strlen(input);
+            mostrarResult (widget, data);
             break;
         case 5:
             //calcularPorcentaje(operando1, operando2);
@@ -87,12 +126,6 @@ static void igual(GtkWidget *widget, gpointer data) {
         default:
             break;
     }
-}
-
-//funcion para guardar los numeros
-static void mostrarNum (GtkWidget *widget, gpointer data) {
-    numero = atoi(input);
-    g_print("%d\n", numero);
 }
 
 static void saveNumber(GtkWidget *widget, gpointer data) {
@@ -161,7 +194,6 @@ static void activate(GtkApplication *application, gpointer user_data) {
     GtkWidget *window;
     GtkWidget *grid;
     GtkWidget *button;
-    GtkWidget *label;
 
     window = gtk_application_window_new(application);
     gtk_window_set_title(GTK_WINDOW(window), "Calculadora");
@@ -170,14 +202,14 @@ static void activate(GtkApplication *application, gpointer user_data) {
     grid = gtk_grid_new();
     gtk_window_set_child(GTK_WINDOW(window), grid);
 
-    label = gtk_label_new("Result");
+    label = gtk_label_new("");
     gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
 
     button = gtk_button_new_with_label("AC"); // Clear
-    g_signal_connect(button, "clicked", G_CALLBACK(ac), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(clear), NULL);
     gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 1, 1);
 
-    button = gtk_button_new_with_label("<"); // Backspace
+    button = gtk_button_new_with_label("±"); // mas menos
     g_signal_connect(button, "clicked", G_CALLBACK(say_hello), NULL);
     gtk_grid_attach(GTK_GRID(grid), button, 1, 1, 1, 1);
 
