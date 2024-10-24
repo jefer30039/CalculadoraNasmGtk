@@ -8,13 +8,15 @@ extern long calcularDivision(long operando1, long operando2);
 //extern void calcularPorcentaje(long operando1, long operando2);
 
 char input[100];
-long numero = 0;
+float numero = 0;
 char *numeroStr;
 int posicion_input = 0;
-long operando1 = 0;
-long operando2 = 0;
+float operando1 = 0;
+float operando2 = 0;
 int operacion = 0;
-long resultado = 0;
+float resultado = 0;
+float porcent = 0;
+int masMenosUsed = 0;
 GtkWidget *label;
 
 //funcion para limpiar la entrada
@@ -34,22 +36,18 @@ void updateDisplay(GtkWidget *label, char *texto) {
 static void mostrarNum (GtkWidget *widget, gpointer data) {
     numero = atol (input);
     char numeroStr[20];
-    snprintf(numeroStr, sizeof(numeroStr), "%ld", numero);
+    snprintf(numeroStr, sizeof(numeroStr), "%g", numero);
     //llama a updateDisplay
     updateDisplay (label, numeroStr);
 
 }
-
 //funcion para mostrar los resultados
 static void mostrarResult (GtkWidget *widget, gpointer data) {
     char resultadoStr[20];
-    snprintf(resultadoStr, sizeof(resultadoStr), "%ld", resultado);
+    //ignora los ceros a la derecha
+
+    snprintf(resultadoStr, sizeof(resultadoStr), "%g", resultado);
     updateDisplay (label, resultadoStr);
-
-}
-
-static void say_hello (GtkWidget *widget, gpointer data) {
-    g_print("Hello World\n");
 }
 static void suma (GtkWidget *widget, gpointer data) {
     updateDisplay (label, "+");
@@ -78,13 +76,24 @@ static void resta (GtkWidget *widget, gpointer data) {
     limpiarEntrada(widget, data);
     operacion = 4;
 }static void porcentaje (GtkWidget *widget, gpointer data) {
-    g_print("porcetaje\n");
-    operando1 = numero;
-    numero = 0;
-    operacion = 5;
+    operando1 = numero;    posicion_input = strlen(input);
+    porcent = (float)operando1 / 100;
+    resultado = porcent;
+    //guarda el resultado en la entrada
+    snprintf(input, sizeof(input), "%f", resultado);
+    posicion_input = strlen(input);
+    mostrarResult (widget, data);
 }static void clear (GtkWidget *widget, gpointer data) {
     limpiarEntrada(widget, data);
     updateDisplay (label, " ");
+} static void masMenos (GtkWidget *widget, gpointer data) {
+    operando1 = numero * -1;
+    resultado = operando1;
+    limpiarEntrada(widget, data);
+    //guarda el resultado en la entrada
+    snprintf(input, sizeof(input), "%f", resultado);
+    posicion_input = strlen(input);
+    mostrarResult (widget, data);
 }
 static void igual(GtkWidget *widget, gpointer data) {
     operando2 = numero;
@@ -92,36 +101,35 @@ static void igual(GtkWidget *widget, gpointer data) {
         case 1:
             resultado = calcularSuma(operando1, operando2);
             //guardar el resultado en la entrada
-            snprintf(input, sizeof(input), "%ld", resultado);
+            snprintf(input, sizeof(input), "%f", resultado);
             posicion_input = strlen(input);
             mostrarResult (widget, data);
             break;
         case 2:
-            resultado = calcularResta(operando1, operando2);
-            g_print("Resultado: %ld\n", resultado);
+            if (operando1 < operando2) {
+                resultado = calcularResta(operando2, operando1);
+                resultado = resultado * -1;
+            } else {
+                resultado = calcularResta(operando1, operando2); 
+            }
             //guardar el resultado en la entrada
-            snprintf(input, sizeof(input), "%ld", resultado);
+            snprintf(input, sizeof(input), "%f", resultado);
             posicion_input = strlen(input);
             mostrarResult (widget, data);
             break;
         case 3:
             resultado = calcularMultiplicacion(operando1, operando2);
-            g_print("Resultado: %ld\n", resultado);
             //guardar el resultado en la entrada
-            snprintf(input, sizeof(input), "%ld", resultado);
+            snprintf(input, sizeof(input), "%f", resultado);
             posicion_input = strlen(input);
             mostrarResult (widget, data);            
             break;
         case 4:
             resultado = calcularDivision(operando1, operando2);
-            g_print("Resultado: %ld\n", resultado);
             //guardar el resultado en la entrada
-            snprintf(input, sizeof(input), "%ld", resultado);
+            snprintf(input, sizeof(input), "%f", resultado);
             posicion_input = strlen(input);
             mostrarResult (widget, data);
-            break;
-        case 5:
-            //calcularPorcentaje(operando1, operando2);
             break;
         default:
             break;
@@ -210,7 +218,7 @@ static void activate(GtkApplication *application, gpointer user_data) {
     gtk_grid_attach(GTK_GRID(grid), button, 0, 1, 1, 1);
 
     button = gtk_button_new_with_label("±"); // mas menos
-    g_signal_connect(button, "clicked", G_CALLBACK(say_hello), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(masMenos), NULL);
     gtk_grid_attach(GTK_GRID(grid), button, 1, 1, 1, 1);
 
     button = gtk_button_new_with_label("%"); // Porcentage
