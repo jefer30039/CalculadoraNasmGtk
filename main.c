@@ -205,7 +205,7 @@ static void activate(GtkApplication *application, gpointer user_data) {
 
     window = gtk_application_window_new(application);
     gtk_window_set_title(GTK_WINDOW(window), "Calculadora");
-    gtk_window_set_default_size(GTK_WINDOW(window), 170, 180);
+    gtk_window_set_default_size(GTK_WINDOW(window), 170, 155);
 
     grid = gtk_grid_new();
     gtk_window_set_child(GTK_WINDOW(window), grid);
